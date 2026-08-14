@@ -72,8 +72,8 @@ try:
 
         # 2. Despliegue en 4 columnas (formato sin decimales)
         col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Máximo (MWh)", f"{val_max:,.0f}")
-        col2.metric("Mínimo (MWh)", f"{val_min:,.0f}")
+        col1.metric("Máximo (MW)", f"{val_max:,.0f}")
+        col2.metric("Mínimo (MW)", f"{val_min:,.0f}")
         col3.metric("Energía transitada (MWh)", f"{energia_transitada:,.0f}")
         col4.metric(f"Energía {texto_descripcion} (MWh)", f"{energia_desc:,.0f}")
 
