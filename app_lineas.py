@@ -18,7 +18,7 @@ from pathlib import Path
 
 # Construye una ruta relativa basada en la ubicación de este script
 DIRECTORIO_ACTUAL = Path(__file__).parent
-ruta_parquet = DIRECTORIO_ACTUAL / "data" / "Lineas_Horario_202607.parquet"
+ruta_parquet = DIRECTORIO_ACTUAL / "Lineas_Horario_202607.parquet"
 
 # Cargar los datos y dejarlos en caché para mayor velocidad
 @st.cache_data
