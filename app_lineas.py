@@ -11,7 +11,7 @@ import plotly.express as px
 from pathlib import Path
 
 # Configuración inicial de la página
-st.set_page_config(page_title="Dashboard Vertimientos - Julio", layout="wide")
+st.set_page_config(page_title="Dashboard Transmisión - Julio", layout="wide")
 st.title("Análisis Horario de Medidas por Línea - Julio 2026")
 
 # Ruta del archivo Parquet (actualizada a relativa para GitHub)
@@ -23,7 +23,7 @@ ruta_parquet = DIRECTORIO_ACTUAL / "Lineas_Horario_202607.parquet"
 def cargar_datos():
     df = pd.read_parquet(ruta_parquet)
     
-    # 1. Modificación: Dividir medida_3 por 1000 para pasar a MWh
+    # Dividir medida_3 por 1000 para pasar a MWh
     df['medida_3'] = df['medida_3'] / 1000
     
     # Crear un campo combinado para facilitar la lectura en el selector
@@ -55,11 +55,19 @@ try:
         
         st.subheader(f"Resultados para Línea: `{clave_str}` | Descripción: `{descripcion_seleccionada}`")
         
-        # Tarjetas de resumen (KPIs) formateadas sin decimales
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Horas con registro", f"{len(df_final)} / 744")
-        col2.metric("Suma Total (MWh)", f"{df_final['medida_3'].sum():,.0f}")
-        col3.metric("Promedio Horario (MWh)", f"{df_final['medida_3'].mean():,.0f}")
+        # --- NUEVAS TARJETAS DE RESUMEN (KPIs) ---
+        # 1. Cálculos de las métricas solicitadas
+        val_max = df_final['medida_3'].max()
+        val_min = df_final['medida_3'].min()
+        energia_transitada = df_final['medida_3'].abs().sum() # Suma de valores absolutos
+        energia_desc = df_final['medida_3'].sum() # Suma normal para la descripción seleccionada
+
+        # 2. Despliegue en 4 columnas (formato sin decimales)
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Máximo (MWh)", f"{val_max:,.0f}")
+        col2.metric("Mínimo (MWh)", f"{val_min:,.0f}")
+        col3.metric("Energía transitada (MWh)", f"{energia_transitada:,.0f}")
+        col4.metric(f"Energía {descripcion_seleccionada} (MWh)", f"{energia_desc:,.0f}")
 
         # Gráfico de serie de tiempo utilizando Plotly
         fig = px.line(
