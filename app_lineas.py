@@ -11,7 +11,7 @@ import plotly.express as px
 from pathlib import Path
 
 # Configuración inicial de la página
-st.set_page_config(page_title="Dashboard Transmisión - Julio", layout="wide")
+st.set_page_config(page_title="Dashboard Vertimientos - Julio", layout="wide")
 st.title("Análisis Horario de Medidas por Línea - Julio 2026")
 
 # Ruta del archivo Parquet (actualizada a relativa para GitHub)
@@ -62,12 +62,20 @@ try:
         energia_transitada = df_final['medida_3'].abs().sum() # Suma de valores absolutos
         energia_desc = df_final['medida_3'].sum() # Suma normal para la descripción seleccionada
 
+        # Modificación: Cambiar "de" por "hacia" si la energía total es negativa
+        texto_descripcion = descripcion_seleccionada
+        if energia_desc < 0:
+            if texto_descripcion.startswith("de_"):
+                texto_descripcion = texto_descripcion.replace("de_", "hacia_", 1)
+            elif texto_descripcion.startswith("de "):
+                texto_descripcion = texto_descripcion.replace("de ", "hacia ", 1)
+
         # 2. Despliegue en 4 columnas (formato sin decimales)
         col1, col2, col3, col4 = st.columns(4)
         col1.metric("Máximo (MWh)", f"{val_max:,.0f}")
         col2.metric("Mínimo (MWh)", f"{val_min:,.0f}")
         col3.metric("Energía transitada (MWh)", f"{energia_transitada:,.0f}")
-        col4.metric(f"Energía {descripcion_seleccionada} (MWh)", f"{energia_desc:,.0f}")
+        col4.metric(f"Energía {texto_descripcion} (MWh)", f"{energia_desc:,.0f}")
 
         # Gráfico de serie de tiempo utilizando Plotly
         fig = px.line(
